@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My FILM</title>
+
+  <link rel="stylesheet" href="assets/css/bootstrap.min.css" />
+</head>
+
+<body>
+  <!-- Container -->
+  <div class="container">
+    <div class="row mt-5 mx-auto">
+      <div class="col">
+        <h1>My Film</h1>
+      </div>
+    </div>
+
+    <!-- Search -->
+    <div class="row">
+      <div class="col-md-4">
+        <div class="input-group mb-3">
+          <input type="text" class="form-control" placeholder="Cari Film.." id="cariFilm">
+          <button class="btn btn-primary" type="button" id="tombolCari">Button</button>
+        </div>
+      </div>
+    </div>
+    <!-- Search -->
+
+    <!-- Card -->
+    <div class="row container-film">
+
+    </div>
+    <!-- Card -->
+  </div>
+  <!-- Akhir Container -->
+
+  <!-- Modal -->
+  <div class="modal fade" id="detailFilm" tabindex="-1" aria-labelledby="detailFilmLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="detailFilmLabel">Detail Film</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="closeButton">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Akhir Modal -->
+
+  <script src="assets/js/jquery-3.7.1.min.js"></script>
+  <script src="assets/js/bootstrap.bundle.min.js"></script>
+  <script src="assets/js/index.js"></script>
+</body>
+
+</html>
