@@ -1,51 +1,46 @@
-$('#tombolCari').on('click', function () {
-  const namaFilm = $('#cariFilm').val();
+//Tombol Cari Film
+const tombolCari = document.querySelector('#tombolCari');
+tombolCari.addEventListener('click', function() {
+  const namaFilm = document.querySelector('#cariFilm').value;
+  fetch(`http://www.omdbapi.com/?apikey=dca61bcc&s='${namaFilm}'`)
+    .then(response => response.json())
+    .then(dataFilm => {
+      const film = dataFilm.Search;
+      const statusFilm = dataFilm.Response;
+      const cardsFilm = document.querySelector('.container-film');
+      let cards = '';
+
+      if (statusFilm === 'True') {
+        film.forEach(item => cards += rowCards(item));
+        cardsFilm.innerHTML = cards;
+
+        /* Tombol Detail Film */
+        const tombolDetail = document.querySelectorAll('.modal-detail-button');
+        tombolDetail.forEach(btn => {
+          btn.addEventListener('click', function() {
+            const imdbID = this.dataset.imdbid;
+
+            fetch(`http://www.omdbapi.com/?apikey=dca61bcc&i=${imdbID}`)
+              .then(response => response.json())
+              .then(film => {
+                const modalFilm = detailModalFilm(film);
   
-  $.ajax({
-    url: `http://www.omdbapi.com/?apikey=dca61bcc&s='${namaFilm}'`,
-    success: function (res) {
-      const statusAPI = res.Response;
-  
-      if (statusAPI === 'True') {
-        const data = res.Search;
-        let cards = '';
-  
-        data.forEach(films => {
-          cards += rowCards(films);
-        });
-  
-        $('.container-film').html(cards);
-  
-        /* Ketika Modal Detail Film Diklik */
-        $('.modal-detail-button').on('click', function () {
-          const imdbID = $(this).data('imdbid');
-  
-          $.ajax({
-            url: `http://www.omdbapi.com/?apikey=dca61bcc&i=${imdbID}`,
-            success: function (film) {
-              const detailFilm = dataFilm(film);
-  
-              $('.modal-body').html(detailFilm);
-            },
-            error: function (e) {
-              console.log(e.responseJSON);
-            }
+                const modalBody = document.querySelector('.modal-body');
+                modalBody.innerHTML = modalFilm;
+              });
           });
         });
-        /* Akhir Ketika Modal Detail Film Diklik */
-  
+        /* Akhir Tombol Detail Film */
       }else{
-        $('.container-film').html("Maaf yaa.. Film tidak ditemukan :(");
+        cardsFilm.innerHTML = "Maaf yaa.. Film tidak ditemukan :(";
       }
-    },
-    error: function (e){
-      console.log(e.responseJSON);
-    }
-  });
+    })
+    .catch(err => console.info(err))
 });
 
-
-$('#closeButton').on('click', function () {
+//Tombol Tutup
+const tombolTutup = document.querySelector('#closeButton');
+tombolTutup.addEventListener('click', function() {
   const isiAwal = `<div class="container-fluid">
                     <div class="row">
                       <div class="col-md-3">
@@ -63,12 +58,13 @@ $('#closeButton').on('click', function () {
                       </div>
                     </div>
                   </div>`;
-
-  $('.modal-body').html(isiAwal);
+  
+  const modalDetail = document.querySelector('.modal-body');
+  modalDetail.innerHTML = isiAwal;
 });
 
-function rowCards (films) {
-  return `<div class="col-lg-3 col-md-4 my-3 mx-auto">
+function rowCards(films) {
+  return `<div class="col-lg-3 col-md-4 my-3">
             <div class="card">
               <img src="${films.Poster}" class="img-thumbnail rounded" />
               <div class="card-body">
@@ -80,7 +76,7 @@ function rowCards (films) {
           </div>`;
 }
 
-function dataFilm (film) {
+function detailModalFilm(film) {
   return `<div class="container-fluid">
             <div class="row">
               <div class="col-md-3">
