@@ -1,67 +1,63 @@
 //Tombol Cari Film
-const tombolCari = document.querySelector('#tombolCari');
-tombolCari.addEventListener('click', function() {
-  const namaFilm = document.querySelector('#cariFilm').value;
-  fetch(`http://www.omdbapi.com/?apikey=dca61bcc&s='${namaFilm}'`)
-    .then(response => response.json())
-    .then(dataFilm => {
-      const film = dataFilm.Search;
-      const statusFilm = dataFilm.Response;
-      const cardsFilm = document.querySelector('.container-film');
-      let cards = '';
+const tombolCari = document.querySelector("#tombolCari");
+tombolCari.addEventListener("click", async function () {
+  const namaFilm = document.querySelector("#cariFilm");
+  const films = await getFilms(namaFilm.value);
 
-      if (statusFilm === 'True') {
-        film.forEach(item => cards += rowCards(item));
-        cardsFilm.innerHTML = cards;
-
-        /* Tombol Detail Film */
-        const tombolDetail = document.querySelectorAll('.modal-detail-button');
-        tombolDetail.forEach(btn => {
-          btn.addEventListener('click', function() {
-            const imdbID = this.dataset.imdbid;
-
-            fetch(`http://www.omdbapi.com/?apikey=dca61bcc&i=${imdbID}`)
-              .then(response => response.json())
-              .then(film => {
-                const modalFilm = detailModalFilm(film);
-  
-                const modalBody = document.querySelector('.modal-body');
-                modalBody.innerHTML = modalFilm;
-              });
-          });
-        });
-        /* Akhir Tombol Detail Film */
-      }else{
-        cardsFilm.innerHTML = "Maaf yaa.. Film tidak ditemukan :(";
-      }
-    })
-    .catch(err => console.info(err))
+  showCards(films);
 });
 
-//Tombol Tutup
-const tombolTutup = document.querySelector('#closeButton');
-tombolTutup.addEventListener('click', function() {
-  const isiAwal = `<div class="container-fluid">
-                    <div class="row">
-                      <div class="col-md-3">
-                        <img src="" alt="" class="img-fluid">
-                      </div>
-                      <div class="col-md">
-                        <ul class="list-group">
-                          <li class="list-group-item"><h4></h4></li>
-                          <li class="list-group-item"><strong></strong></li>
-                          <li class="list-group-item"><strong></strong></li>
-                          <li class="list-group-item"><strong></strong></li>
-                          <li class="list-group-item"><strong></strong></li>
-                          <li class="list-group-item"><strong></strong></li>
-                        </ul>
-                      </div>
-                    </div>
-                  </div>`;
-  
-  const modalDetail = document.querySelector('.modal-body');
-  modalDetail.innerHTML = isiAwal;
+//Event Binding buat tombol detail film
+document.addEventListener("click", async function (element) {
+  if (element.target.classList.contains("modal-detail-button")) {
+    const imdbID = element.target.dataset.imdbid;
+    const detailFilm = await getDetailFilm(imdbID);
+
+    showDetail(detailFilm);
+  }
 });
+
+function getFilms(keyword) {
+  return fetch(`http://www.omdbapi.com/?apikey=dca61bcc&s='${keyword}'`)
+    .then((response) => response.json())
+    .then((dataFilm) => [
+      {
+        data: dataFilm.Search,
+        status: dataFilm.Response,
+      },
+    ])
+    .catch((err) => console.info(err));
+}
+
+function showCards(items) {
+  const arr = items[0];
+  const film = arr.data;
+  const statusFilm = arr.status;
+
+  let cardsFilm = document.querySelector(".container-film");
+  let cards = "";
+
+  if (statusFilm === "True") {
+    film.forEach((i) => (cards += rowCards(i)));
+    cardsFilm.innerHTML = cards;
+  } else {
+    cardsFilm.innerHTML = "Maaf yaa.. Film tidak ditemukan :(";
+  }
+}
+
+function getDetailFilm(imdbID) {
+  return fetch(`http://www.omdbapi.com/?apikey=dca61bcc&i=${imdbID}`)
+    .then((response) => response.json())
+    .then((film) => film)
+    .catch((err) => console.info(err));
+}
+
+function showDetail(detailItem) {
+  const modalFilm = detailModalFilm(detailItem);
+
+  const modalBody = document.querySelector(".modal-body");
+  modalBody.innerHTML = modalFilm;
+}
 
 function rowCards(films) {
   return `<div class="col-lg-3 col-md-4 my-3">
