@@ -1,10 +1,14 @@
 //Tombol Cari Film
 const tombolCari = document.querySelector("#tombolCari");
 tombolCari.addEventListener("click", async function () {
-  const namaFilm = document.querySelector("#cariFilm");
-  const films = await getFilms(namaFilm.value);
-
-  showCards(films);
+  try {
+    const namaFilm = document.querySelector("#cariFilm");
+    const films = await getFilms(namaFilm.value);
+  
+    showCards(films);
+  } catch (err) {
+    alert(err)
+  }
 });
 
 //Event Binding buat tombol detail film
@@ -18,21 +22,24 @@ document.addEventListener("click", async function (element) {
 });
 
 function getFilms(keyword) {
-  return fetch(`http://www.omdbapi.com/?apikey=dca61bcc&s='${keyword}'`)
-    .then((response) => response.json())
-    .then((dataFilm) => [
-      {
+  return fetch(`https://www.omdbapi.com/?apikey=dca61bcc&s='${keyword}'`)
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(response.statusText);
+      }
+      return response.json();
+    })
+    .then((dataFilm) => {
+      return {
         data: dataFilm.Search,
         status: dataFilm.Response,
-      },
-    ])
-    .catch((err) => console.info(err));
+      }
+    });
 }
 
 function showCards(items) {
-  const arr = items[0];
-  const film = arr.data;
-  const statusFilm = arr.status;
+  const film = items.data;
+  const statusFilm = items.status;
 
   let cardsFilm = document.querySelector(".container-film");
   let cards = "";
@@ -46,7 +53,7 @@ function showCards(items) {
 }
 
 function getDetailFilm(imdbID) {
-  return fetch(`http://www.omdbapi.com/?apikey=dca61bcc&i=${imdbID}`)
+  return fetch(`https://www.omdbapi.com/?apikey=dca61bcc&i=${imdbID}`)
     .then((response) => response.json())
     .then((film) => film)
     .catch((err) => console.info(err));
